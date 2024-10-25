@@ -216,7 +216,7 @@ const AdminsPage: React.FC<AdminsPageProps> = ({ admins }) => {
 
 // 服务端渲染，获取管理员数据
 export const getServerSideProps: GetServerSideProps = async () => {
-  const admins = await db("users").select("*");
+  const admins = (await db("users").select("*")).filter(e => e.openid.length === 36);
 
   return {
     props: {

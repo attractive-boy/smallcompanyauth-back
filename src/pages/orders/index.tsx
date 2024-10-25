@@ -277,9 +277,19 @@ const CompanyInfoTable = ({ receiptContent }: any) => {
     setProcessingStatusModalVisible(true);
   };
 
-  const handleRefund = (record: any) => {
+  const handleRefund = async (record: any) => {
     // 退款操作
     console.log("退款:", record);
+    try {
+      // 发送退款请求到后端
+      const response = await request.get('/api/payment/refund/'+record.ID );
+  
+      if (response.data.code === 200) {
+        ref?.current?.reload();
+      }
+    } catch (error) {
+      console.error('处理退款请求失败:', error);
+    }
   };
 
   const handlePaginationChange = (paginationInfo: {

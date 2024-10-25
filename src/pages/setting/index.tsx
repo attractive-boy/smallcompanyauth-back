@@ -189,7 +189,7 @@ export async function getServerSideProps() {
                 uid: (index + 1).toString(), // Generate a unique ID for each file
                 name: url.split("/").pop(), // Extract the file name from the URL
                 status: "done", // Indicate that the upload is complete
-                url: `http://${MINIO_ENDPOINT}:${MINIO_PORT}` + url,
+                url: `${process.env.BASE_URL}/minio` + url,
               }));
             } else {
               acc[settingkey] = settingvalue; // If not an array, set to empty array

@@ -3,6 +3,7 @@ import WxPay from 'wechatpay-node-v3';
 import fs from 'fs';
 import knex from '../../../db'; // 假设你的数据库连接文件
 import { Ijsapi } from 'wechatpay-node-v3/dist/lib/interface';
+import db from '../../../db';
 
 // 创建微信支付客户端
 const pay = new WxPay({
@@ -29,19 +30,24 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const { OrderNumber, ServiceItemsAmount, DiscountAmount, ServiceItems, userid } = companyInfo;
 
       // 这里可以定义你的订单信息，确保有必要的字段
-      const orderId = OrderNumber; // 使用公司的订单号
+      const PaymentOrderNumber = `${Date.now()}${Math.floor(Math.random() * 10000)}`;
       const totalAmount = ServiceItemsAmount - DiscountAmount; // 计算实际支付金额
       const description = `服务项目: ${ServiceItems}`; // 商品描述
       const { openid } = await knex('users').where({ id: userid }).first();
       console.log("openid=>", openid)
       // 创建订单请求
       const orderData : Ijsapi = {
-        out_trade_no: orderId, // 商户订单号
+        out_trade_no: PaymentOrderNumber, // 商户订单号
         notify_url: `${process.env.BASE_URL}/api/payment/notify`, // 交易完成后通知的 URL
         description: description, // 如果Ijsapi需要description
         amount: {total: parseInt((totalAmount * 100).toString())}, // 如果Ijsapi需要amount
         payer: {openid}, 
       };
+
+      await db('CompanyInfo').where({id}).update({
+        paymentOrderNumber: PaymentOrderNumber,
+        PaymentMethod : "微信支付",
+      });
 
       // 调用微信支付接口创建订单
       const order = await pay.transactions_jsapi(orderData);
