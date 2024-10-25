@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@ant-design/pro-components": "^2.6.52",
+    "@types/antd": "^1.0.4",
     "@types/minio": "^7.1.1",
     "axios": "^1.7.7",
     "bcryptjs": "^2.4.3",

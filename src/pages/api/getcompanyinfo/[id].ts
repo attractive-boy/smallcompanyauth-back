@@ -13,11 +13,7 @@ const fetchCompanyInfo = async (keyword: string) => {
   const response = await axios.get(url, {
     headers: {
       Authorization: token,
-    },
-    proxy: {
-      host: "127.0.0.1",
-      port: 7890,
-    },
+    }
   });
   return response.data;
 };
