@@ -12,6 +12,7 @@ const pay = new WxPay({
 });
 
 export default async function handler(req:NextApiRequest, res:NextApiResponse) {
+  console.log("paymentreq=>",req)
   if (req.method === 'POST') {
     try {
         // 从请求头中获取微信支付签名和消息体
@@ -28,6 +29,7 @@ export default async function handler(req:NextApiRequest, res:NextApiResponse) {
         body: body,
         serial: serialNo?.toString() || '',
         signature: signature?.toString() || '',
+        apiSecret: process.env.WECHAT_API_SECRET || '',
       });
 
       if (!isValidSignature) {
@@ -35,7 +37,7 @@ export default async function handler(req:NextApiRequest, res:NextApiResponse) {
       }
 
       // 处理支付成功的逻辑
-      const paymentResult = body.resource.payment;
+      const paymentResult: any = pay.decipher_gcm(body.resource.ciphertext,body.resource.associated_data,body.resource.nonce,process.env.WECHAT_API_SECRET || undefined);
       console.log('支付成功:', paymentResult);
       const PaymentOrderNumber = paymentResult.out_trade_no;
 

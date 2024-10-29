@@ -242,13 +242,16 @@ const CompanyInfoTable = ({ receiptContent }: any) => {
           </Button>
         ) : null,
         record.OrderStatus != "作废" && record.IsPaid === 1 ? (
-          <Button
-            type="link"
-            style={{ width: "50px" }}
-            onClick={() => handleRefund(record)}
-          >
+          <Popconfirm
+          title="确定要退款吗？"
+          onConfirm={() => handleRefund(record)}
+          okText="确定"
+          cancelText="取消"
+        >
+          <Button type="link" style={{ width: "50px" }} danger>
             退款
           </Button>
+        </Popconfirm> 
         ) : null,
       ],
       align: "center",
@@ -283,10 +286,8 @@ const CompanyInfoTable = ({ receiptContent }: any) => {
     try {
       // 发送退款请求到后端
       const response = await request.get('/api/payment/refund/'+record.ID );
-  
-      if (response.data.code === 200) {
-        ref?.current?.reload();
-      }
+      ref?.current?.reload();
+
     } catch (error) {
       console.error('处理退款请求失败:', error);
     }
